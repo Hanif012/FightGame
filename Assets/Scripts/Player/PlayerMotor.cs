@@ -20,23 +20,24 @@ public class PlayerMotor : MonoBehaviour
     public void ProcessMove(Vector2 input)
     {
         Vector3 moveDirection = Vector3.zero;
+        Debug.Log(input.x);
         moveDirection.z = input.x;
-        // mengecek LX
-        if (0 < moveDirection.z && moveDirection.z <= 0.5)
+        //mengecek LX
+        if (input.x > 0f && input.x <= 0.75f || input.x < 0f && input.x >= -0.75f)
         {
             // 0 < Lx <= 0.5 Walk
-            Debug.Log("Walk");
+            //Debug.Log("Walk");
             speed = 2;
         }
-        else if (0.5 < moveDirection.z && moveDirection.z < 1)
+        else if (input.x > 0.75f && input.x <= 1f || input.x < -0.75f && input.x >= -1f)
         {
             // 0.5 < Lx < 1 Run
-            Debug.Log("Run");
+            //Debug.Log("Run");
             speed = 5;
         }
-        else if (moveDirection.z == 0) 
+        else if (input.x == 0f)
         {
-            Debug.Log("Idle");
+            //Debug.Log("Idle");
         }
 
         controller.Move(transform.TransformDirection(moveDirection) * speed * Time.deltaTime);
