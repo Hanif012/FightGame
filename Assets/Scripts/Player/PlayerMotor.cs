@@ -21,15 +21,15 @@ public class PlayerMotor : MonoBehaviour
     {
         Vector3 moveDirection = Vector3.zero;
         Debug.Log(input.x);
-        moveDirection.z = input.x;
+        moveDirection.x = input.x;
         //mengecek LX
-        if (input.x > 0f && input.x <= 0.75f || input.x < 0f && input.x >= -0.75f)
+        if (input.x > 0f && input.x <= 0.5f || input.x < 0f && input.x >= -0.5f)
         {
             // 0 < Lx <= 0.5 Walk
             //Debug.Log("Walk");
             speed = 2;
         }
-        else if (input.x > 0.75f && input.x <= 1f || input.x < -0.75f && input.x >= -1f)
+        else if (input.x > 0.5f && input.x <= 1f || input.x < -0.5f && input.x >= -1f)
         {
             // 0.5 < Lx < 1 Run
             //Debug.Log("Run");
@@ -40,6 +40,6 @@ public class PlayerMotor : MonoBehaviour
             //Debug.Log("Idle");
         }
 
-        controller.Move(transform.TransformDirection(moveDirection) * speed * Time.deltaTime);
+        transform.position += moveDirection * speed * Time.deltaTime;
     }
 }

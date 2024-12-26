@@ -19,7 +19,7 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        motor.ProcessMove(playerActions.Movement.ReadValue<Vector2>());
+        motor.ProcessMove(playerActions.Move.ReadValue<Vector2>().normalized);
     }
     private void OnEnable()
     {
