@@ -13,13 +13,14 @@ public class InputManager : MonoBehaviour
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
         motor = GetComponent<PlayerMotor>();
+        playerActions.Jump.performed += ctx => motor.Jump();
    
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        motor.ProcessMove(playerActions.Move.ReadValue<Vector2>().normalized);
+        motor.ProcessMove(playerActions.Move.ReadValue<Vector2>());
     }
     private void OnEnable()
     {
