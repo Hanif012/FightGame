@@ -7,14 +7,18 @@ public class InputManager : MonoBehaviour
     private InputSystem_Actions.PlayerActions playerActions;
 
     private PlayerMotor motor;
+    private PlayerAttack attack; 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
+
         motor = GetComponent<PlayerMotor>();
+        attack = GetComponent<PlayerAttack>();
+
         playerActions.Jump.performed += ctx => motor.Jump();
-   
+        playerActions.Attack.performed += ctx => attack.PerformAttack();
     }
 
     // Update is called once per frame

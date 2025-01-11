@@ -6,6 +6,7 @@ public class PlayerMotor : MonoBehaviour
     public float jumpHeight = 16f;
     public float gravity = -9.81f;
 
+    [Header("Components")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
