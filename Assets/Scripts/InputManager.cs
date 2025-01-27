@@ -8,6 +8,7 @@ public class InputManager : MonoBehaviour
 
     private PlayerMotor motor;
     private PlayerAttack attack; 
+    private PlayerSpecial special;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -16,9 +17,11 @@ public class InputManager : MonoBehaviour
 
         motor = GetComponent<PlayerMotor>();
         attack = GetComponent<PlayerAttack>();
+        special = GetComponent<PlayerSpecial>();
 
         playerActions.Jump.performed += ctx => motor.Jump();
         playerActions.Attack.performed += ctx => attack.PerformAttack();
+        playerActions.Special.performed += ctx => special.PerformSpecial();
     }
 
     // Update is called once per frame
