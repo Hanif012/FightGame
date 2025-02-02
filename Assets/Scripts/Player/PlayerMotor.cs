@@ -10,17 +10,14 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Transform character;
 
     private bool isGrounded;
     private bool doubleJump;
 
-    private PlayerGrabnThrow playerGrabnThrow;
     private InputManager inputManager;
 
     void Start()
     {
-        playerGrabnThrow = GetComponent<PlayerGrabnThrow>();
         inputManager = GetComponent<InputManager>();
 
     }
@@ -40,21 +37,23 @@ public class PlayerMotor : MonoBehaviour
     // Gerak
     public void ProcessMove(Vector2 input)
     {
-        if (inputManager.diGrab)
-            return;
-        if (playerGrabnThrow.grabPlayer)
-            return;
-        Vector2 moveDirection = new Vector2(input.x, 0f);
-
-        // Mengubah arah hadap karakter
         if (input.x < 0f)
         {
-            character.rotation = Quaternion.Euler(0, 0, 0);
+            transform.rotation = Quaternion.Euler(0, 0, 0);
         }
         else if (input.x > 0f)
         {
-            character.rotation = Quaternion.Euler(0, 180, 0);
+            transform.rotation = Quaternion.Euler(0, -180, 0);
         }
+
+        if (inputManager.diGrab)
+        {
+            return;
+        }
+        Vector2 moveDirection = new Vector2(input.x, 0f);
+
+        // Mengubah arah hadap karakter
+
 
         // Mengecek kecepatan berdasarkan input horizontal
         if (input.x == 0f)
@@ -69,6 +68,7 @@ public class PlayerMotor : MonoBehaviour
         {
             speed = 5;
         }
+
         rb.linearVelocity = new Vector2(moveDirection.normalized.x * speed, rb.linearVelocity.y);
     }
 
@@ -76,7 +76,7 @@ public class PlayerMotor : MonoBehaviour
     // Fungsi loncat
     public void Jump()
     {
-        if (inputManager.diGrab)
+        if (inputManager.diGrab == true)
             return;
         Debug.Log("Input Jump");
 
