@@ -10,20 +10,24 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Animator animator;
 
-    private bool isGrounded;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool isJump ;
+
     private bool doubleJump;
 
     private InputManager inputManager;
-
     void Start()
     {
         inputManager = GetComponent<InputManager>();
-
     }
 
     void Update()
     {
+        isJump = !isGrounded;
+        animator.SetBool("isJumping", !isGrounded);
+
         // Cek apakah karakter berada di tanah
         isGrounded = IsGrounded();
 
@@ -32,6 +36,7 @@ public class PlayerMotor : MonoBehaviour
         {
             Jump();
         }
+    
     }
 
     // Gerak
@@ -68,8 +73,9 @@ public class PlayerMotor : MonoBehaviour
         {
             speed = 5;
         }
-
         rb.linearVelocity = new Vector2(moveDirection.normalized.x * speed, rb.linearVelocity.y);
+        animator.SetFloat("xVelocity", Mathf.Abs(moveDirection.normalized.x));
+        animator.SetFloat("yVelocity", rb.linearVelocity.y);
     }
 
 
@@ -85,12 +91,16 @@ public class PlayerMotor : MonoBehaviour
             doubleJump = true;
             // Menambahkan gaya loncatan
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
-            Debug.Log("Loncat");
-        }else if (doubleJump)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
-            doubleJump = false;
+
         }
+        else if (doubleJump)
+        {
+            doubleJump = false;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
+
+        }
+        animator.SetBool("isJumping", !isGrounded);
+
     }
 
     // Cek apakah karakter berada di tanah
@@ -98,5 +108,12 @@ public class PlayerMotor : MonoBehaviour
     {
         
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Test");
+        animator.SetBool("isJumping", !isGrounded);
+
     }
 }
