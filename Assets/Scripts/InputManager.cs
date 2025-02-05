@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour
     private PlayerAttack attack; 
     private PlayerSpecial special;
     private PlayerGrabnThrow grabnThrow;
+    private PlayerUlt Ult;
 
     public bool diGrab = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -24,11 +25,13 @@ public class InputManager : MonoBehaviour
         attack = GetComponent<PlayerAttack>();
         special = GetComponent<PlayerSpecial>();
         grabnThrow = GetComponent<PlayerGrabnThrow>();
+        Ult = GetComponent<PlayerUlt>();
 
         playerActions.Jump.performed += ctx => motor.Jump();
         playerActions.Attack.performed += ctx => attack.PerformAttack();
         playerActions.Special.performed += ctx => special.PerformSpecial();
         playerActions.GrabnThrow.performed += ctx => grabnThrow.PerformGrabnThrow();
+        playerActions.Ulti.performed += ctx => Ult.PerformUlt();
     }
 
     // Update is called once per frame

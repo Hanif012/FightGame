@@ -13,8 +13,7 @@ public class PlayerSpecial : MonoBehaviour
 
     void Update()
     {
-        // Detect input for attacking
-        if (Input.GetMouseButtonDown(1)) // right mouse button for attack
+        if (Input.GetKey(KeyCode.Q)) 
         {
             PerformSpecial();
         }
