@@ -26,8 +26,10 @@ public class PlayerGrabnThrow : MonoBehaviour
     [Header("Throw")]
     [SerializeField] float throwXPower = 10f;
     [SerializeField] float throwYPower = 5f;
-
-
+    AudioManager audioManager;
+    private void Awake(){
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -64,6 +66,7 @@ public class PlayerGrabnThrow : MonoBehaviour
         {
             Debug.Log("Releasing grabbed player");
             LepasMusuh();
+            audioManager.PlaySFX(audioManager.throwSound);
             return;
         }
 

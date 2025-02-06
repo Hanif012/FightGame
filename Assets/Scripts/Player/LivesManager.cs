@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic; // Required for multiple players
+using System.Collections.Generic;
 
 public class LivesManager : MonoBehaviour
 {

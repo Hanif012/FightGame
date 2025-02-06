@@ -13,6 +13,11 @@ public class PlayerAttack : MonoBehaviour
     private float lastAttackTime = 0;
     private PlayerGrabnThrow playerGrabnThrow;
     private InputManager inputManager;
+    AudioManager audioManager;
+
+    private void Awake(){
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
 
     private void Start()
     {
@@ -43,7 +48,7 @@ public class PlayerAttack : MonoBehaviour
         lastAttackTime = Time.time;
 
         Debug.Log("Player is attacking!");
-
+        audioManager.PlaySFX(audioManager.attack);
         // Detect targets in the attack box
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(attackBoxOrigin.position, attackBoxSize, 0f, targetLayer);
 

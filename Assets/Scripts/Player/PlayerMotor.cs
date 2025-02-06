@@ -14,11 +14,18 @@ public class PlayerMotor : MonoBehaviour
 
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool isJump ;
+    private bool isPlayingWalkSound = false;
+    private bool isPlayingRunSound = false;
+    AudioManager audioManager;
 
     private bool doubleJump;
 
     private InputManager inputManager;
-    void Start()
+
+    private void Awake(){
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+    private void Start()
     {
         inputManager = GetComponent<InputManager>();
     }
@@ -76,6 +83,7 @@ public class PlayerMotor : MonoBehaviour
         rb.linearVelocity = new Vector2(moveDirection.normalized.x * speed, rb.linearVelocity.y);
         animator.SetFloat("xVelocity", Mathf.Abs(moveDirection.normalized.x));
         animator.SetFloat("yVelocity", rb.linearVelocity.y);
+        HandleMovementSound(input.x);
     }
 
 
@@ -84,24 +92,60 @@ public class PlayerMotor : MonoBehaviour
     {
         if (inputManager.diGrab == true)
             return;
-        Debug.Log("Input Jump");
+        
+        if (isGrounded || doubleJump){
+            Debug.Log("Input Jump");
+            audioManager.PlaySFX(audioManager.jump);
+            if (isGrounded)
+            {
+                doubleJump = true;
+                // Menambahkan gaya loncatan
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
 
-        if (isGrounded)
-        {
-            doubleJump = true;
-            // Menambahkan gaya loncatan
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
+            }
+            else if (doubleJump)
+            {
+                doubleJump = false;
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
 
-        }
-        else if (doubleJump)
-        {
-            doubleJump = false;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
-
-        }
-        animator.SetBool("isJumping", !isGrounded);
-
+            }
+            animator.SetBool("isJumping", !isGrounded);
+        } 
     }
+
+    // Manage movement sound
+    private void HandleMovementSound(float horizontalInput){
+        bool isMoving = Mathf.Abs(horizontalInput) > 0.1f;
+        bool isRunning = speed >= 5; 
+
+        if (!isGrounded || !isMoving){
+        StopMovementSounds();
+        return;
+    }
+        
+        if (isRunning){
+            if (!isPlayingRunSound){
+                StopMovementSounds(); // Stop previous sound before playing a new one
+                audioManager.PlaySFX(audioManager.run);
+                isPlayingRunSound = true;
+            }
+        }
+        else{
+            if (!isPlayingWalkSound){
+                StopMovementSounds(); // Stop previous sound before playing a new one
+                audioManager.PlaySFX(audioManager.walk);
+                isPlayingWalkSound = true;
+            }
+        }
+    }
+    private void StopMovementSounds(){
+        if (isPlayingWalkSound || isPlayingRunSound){
+            audioManager.StopSFX();
+        }
+        isPlayingWalkSound = false;
+        isPlayingRunSound = false;
+    }
+
 
     // Cek apakah karakter berada di tanah
     private bool IsGrounded()

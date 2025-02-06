@@ -10,7 +10,10 @@ public class PlayerSpecial : MonoBehaviour
     [SerializeField] private int attackDamage = 2;       // Damage dealt per attack
 
     private float lastAttackTime = 0;
-
+    AudioManager audioManager;
+    private void Awake(){
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
     void Update()
     {
         if (Input.GetKey(KeyCode.Q)) 
@@ -28,6 +31,7 @@ public class PlayerSpecial : MonoBehaviour
         lastAttackTime = Time.time;
 
         Debug.Log("Player is special attacking!");
+        audioManager.PlaySFX(audioManager.attack);
 
         // Detect targets in the attack box
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(specialBoxOrigin.position, specialBoxSize, 0f, targetLayer);

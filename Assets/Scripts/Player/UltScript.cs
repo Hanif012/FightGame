@@ -10,7 +10,10 @@ public class PlayerUlt : MonoBehaviour
     [SerializeField] private int ultDamage = 50; // Big damage
 
     private float lastUltTime = -10f; // Track last ult usage
-
+    AudioManager audioManager;
+    private void Awake(){
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E)) 
@@ -30,6 +33,7 @@ public class PlayerUlt : MonoBehaviour
 
         lastUltTime = Time.time; 
         Debug.Log("Ultimate");
+        audioManager.PlaySFX(audioManager.attack);
 
         // Detect targets in the ult range
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(ultAttackOrigin.position, ultAttackSize, 0f, targetLayer);
