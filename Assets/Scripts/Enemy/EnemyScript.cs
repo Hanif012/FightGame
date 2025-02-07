@@ -11,10 +11,14 @@ public class MovementEnemyScript : MonoBehaviour
     public float jumpHeight = 2;
     public float gravity = -9.81f;
     public float patrolTime = 3f; // Waktu patroli sebelum ganti arah
+
     public float grabbingTime = 5;
+    private float lastGrabTime = 0;
+
+    private float lastSpecialAtkTime = 0;
+    private float specialAtkTime = 3;
 
     private Rigidbody2D rb;
-    private float lastGrabTime = 0;
     private bool doubleJump = false;
     private bool isPatrolling = false;
     private float patrolTimer = 0f;
@@ -32,6 +36,7 @@ public class MovementEnemyScript : MonoBehaviour
     private PlayerCondition sPlayer;
     private PlayerAttack playerAttack;
     private BlockScript blockScript;
+    private PlayerSpecial playerSpecial;
     private PlayerGrabnThrow playerGrabnThrow;
 
     private void Awake()
@@ -39,7 +44,11 @@ public class MovementEnemyScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerAttack = GetComponent<PlayerAttack>();
         blockScript = GetComponent<BlockScript>();
+        playerSpecial = GetComponent<PlayerSpecial>();
+        playerGrabnThrow = GetComponent<PlayerGrabnThrow>();
+        sPlayer = GetComponent<PlayerCondition>();
     }
+
 
     private void FixedUpdate()
     {
@@ -62,6 +71,7 @@ public class MovementEnemyScript : MonoBehaviour
             Vector3 distanceVector = (playerGameObject.transform.position - transform.position);
             if (nearestPlayer == null || distanceVector.magnitude < distance)
             {
+
                 nearestPlayer = playerGameObject;
                 distance = distanceVector.magnitude;
                 direction = distanceVector.normalized;
@@ -97,21 +107,42 @@ public class MovementEnemyScript : MonoBehaviour
         }
         else if (distance < stopDistance + (stopDistance / 2))
         {
+            if (sPlayer.ngeGrab)
+            {
+                blockScript.PerformDeffend(true);
 
+                playerGrabnThrow.PerformGrabnThrow();
+
+            }
             if (eCondition.isAttack )
             {
+                transform.rotation = direction.x < 0f ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
                 blockScript.PerformDeffend(true);
 
             }else if (Time.time < lastGrabTime + grabbingTime )
             {
+                transform.rotation = direction.x < 0f ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+                blockScript.PerformDeffend(true);
                 playerGrabnThrow.PerformGrabnThrow();
                 lastGrabTime = Time.time;
             }
             else
             {
-                blockScript.PerformDeffend(false);
-                playerAttack.PerformAttack();
-                transform.rotation = direction.x < 0f ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+                if (Time.time < lastSpecialAtkTime + specialAtkTime)
+                {
+                    transform.rotation = direction.x < 0f ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+                    blockScript.PerformDeffend(true);
+                    playerSpecial.PerformSpecial();
+                    lastSpecialAtkTime = Time.time;
+
+                }
+                else
+                {
+                    transform.rotation = direction.x < 0f ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+
+                    blockScript.PerformDeffend(false);
+                    playerAttack.PerformAttack();
+                }
             }
 
         }

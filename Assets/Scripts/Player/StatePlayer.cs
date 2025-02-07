@@ -11,6 +11,7 @@ public class PlayerCondition : MonoBehaviour
     public bool isAttack = false;
     public bool isHurt = false;
     public bool specialAttacking = false;
+    public bool isUlti = false;
 
     [Header("Components")]
     [SerializeField] public Animator animator;
@@ -37,6 +38,9 @@ public class PlayerCondition : MonoBehaviour
 
         specialAttacking = false;
         animator.SetBool("isSpecialAtk", specialAttacking);
+
+        isUlti = false;
+        animator.SetBool("isUlt", isUlti);
 
         isHurt = false;
         animator.SetBool("isHurt", isHurt);

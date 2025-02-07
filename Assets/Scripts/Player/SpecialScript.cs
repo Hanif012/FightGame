@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerSpecial : MonoBehaviour
 {
@@ -10,9 +12,17 @@ public class PlayerSpecial : MonoBehaviour
     [SerializeField] private int attackDamage = 2;       // Damage dealt per attack
 
     private float lastAttackTime = 0;
+    private PlayerCondition sPlayer;
+
+    private List<PlayerCondition> hitEnemiesList = new List<PlayerCondition>(); // Menyimpan semua musuh yang terkena hit
     AudioManager audioManager;
     private void Awake(){
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+    private void Start()
+    {
+        sPlayer = GetComponent<PlayerCondition>();
+
     }
     void Update()
     {
@@ -27,11 +37,16 @@ public class PlayerSpecial : MonoBehaviour
         // Cooldown check
         if (Time.time < lastAttackTime + attackCooldown)
             return;
-
+        if (sPlayer.diGrab || sPlayer.ngeGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isAttack || sPlayer.isUlti)
+            return;
         lastAttackTime = Time.time;
-
         Debug.Log("Player is special attacking!");
         audioManager.PlaySFX(audioManager.attack);
+
+        sPlayer.FalseAllAnimation();
+        sPlayer.specialAttacking = true;
+        sPlayer.animator.SetBool("isSpecialAtk", sPlayer.specialAttacking);
+
 
         // Detect targets in the attack box
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(specialBoxOrigin.position, specialBoxSize, 0f, targetLayer);
@@ -39,16 +54,56 @@ public class PlayerSpecial : MonoBehaviour
         foreach (Collider2D target in hitTargets)
         {
             if (target.gameObject == gameObject)continue;
-
+            Transform enemy = target.transform;
             Debug.Log($"Hit: {target.name}");
+            PlayerCondition sEmyPlayer = target.GetComponent<PlayerCondition>();
+
 
             // Apply damage to the target's Health component
             Health health = target.GetComponent<Health>();
             if (health != null)
             {
+                if (sEmyPlayer != null && sEmyPlayer.isBlocking)
+                {
+                    Vector3 directionToTarget = (enemy.position - transform.position).normalized;
+                    Vector3 enemyLook = enemy.transform.forward;
+                    float dot = Vector3.Dot(directionToTarget, enemyLook);
+                    if (dot < 0f || sEmyPlayer.isHurt || sEmyPlayer.isKnock)
+                    {
+                        sEmyPlayer = null;
+                        continue;
+                    }
+                }
                 health.TakeDamage(attackDamage);
+
+                sEmyPlayer.FalseAllAnimation();
+                sEmyPlayer.isHurt = true;
+                sEmyPlayer.animator.SetBool("isHurt", sEmyPlayer.isHurt);
+                hitEnemiesList.Add(sEmyPlayer);
             }
         }
+        Invoke(nameof(ResetHurt), 1);
+        Invoke(nameof(ResetAttack), 0.5f);
+
+    }
+
+    private void ResetAttack()
+    {
+        sPlayer.isAttack = false;
+        sPlayer.animator.SetBool("isSpecialAtk", sPlayer.specialAttacking);
+    }
+
+    private void ResetHurt()
+    {
+        foreach (PlayerCondition sEmyPlayerr in hitEnemiesList)
+        {
+            sEmyPlayerr.isHurt = false;
+            sEmyPlayerr.animator.SetBool("isHurt", sEmyPlayerr.isHurt);
+
+        }
+        hitEnemiesList.Clear();
+
+
     }
 
     private void OnDrawGizmosSelected()

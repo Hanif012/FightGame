@@ -9,13 +9,19 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private LayerMask targetLayer;
     [SerializeField] private float attackCooldown = 0.2f;
     [SerializeField] private int attackDamage = 1;
-    [SerializeField] private float cooldownMove = 1f;
 
     private float lastAttackTime = 0;
     private InputManager inputManager;
     private PlayerCondition sPlayer;
     private PlayerCondition sEmyPlayer;
     private List<PlayerCondition> hitEnemiesList = new List<PlayerCondition>(); // Menyimpan semua musuh yang terkena hit
+    AudioManager audioManager;
+
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
 
     private void Start()
     {
@@ -32,12 +38,15 @@ public class PlayerAttack : MonoBehaviour
     {
         if (sPlayer == null) return;
 
-        if (sPlayer.diGrab || sPlayer.ngeGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking)
+        if (sPlayer.diGrab || sPlayer.ngeGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isUlti)
             return;
 
         if (Time.time < lastAttackTime + attackCooldown)
             return;
         lastAttackTime = Time.time;
+
+        audioManager.PlaySFX(audioManager.attack);
+
 
         sPlayer.FalseAllAnimation();
         sPlayer.isAttack = true;
@@ -69,16 +78,15 @@ public class PlayerAttack : MonoBehaviour
                 }
                 Debug.Log("hit!");
                 health.TakeDamage(attackDamage);
+                sEmyPlayer.FalseAllAnimation();
                 sEmyPlayer.isHurt = true;
                 sEmyPlayer.animator.SetBool("isHurt", sEmyPlayer.isHurt);
                 hitEnemiesList.Add(sEmyPlayer);
             }
 
         }
-        Invoke(nameof(ResetHurt), cooldownMove);
-
-        // Gunakan Invoke untuk reset attack setelah beberapa waktu
-        Invoke(nameof(ResetAttack), cooldownMove);
+        Invoke(nameof(ResetHurt), 1);
+        Invoke(nameof(ResetAttack), 0.5f);
 
     }
 
