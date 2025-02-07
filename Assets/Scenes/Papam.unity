@@ -826,6 +826,9 @@ GameObject:
   - component: {fileID: 294786819}
   - component: {fileID: 294786818}
   - component: {fileID: 294786817}
+  - component: {fileID: 294786827}
+  - component: {fileID: 294786826}
+  - component: {fileID: 294786825}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -872,7 +875,6 @@ MonoBehaviour:
     m_Bits: 128
   grabCooldown: 1
   targetPlayer: {fileID: 0}
-  grabPlayer: 0
   throwXPower: 10
   throwYPower: 5
 --- !u!114 &294786818
@@ -888,6 +890,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
+  respawnPoint: {fileID: 0}
 --- !u!114 &294786819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +910,7 @@ MonoBehaviour:
     m_Bits: 128
   attackCooldown: 0.5
   attackDamage: 1
+  cooldownMove: 0.5
 --- !u!114 &294786820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -919,7 +923,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0167268b1582b43ad468e96649ab63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diGrab: 0
 --- !u!114 &294786821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -940,7 +943,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  animator: {fileID: 2037805037}
   isGrounded: 0
 --- !u!70 &294786822
 CapsuleCollider2D:
@@ -1061,6 +1063,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &294786825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294786815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4044079388cd1c549adbb23c1f190bfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  diGrab: 0
+  ngeGrab: 0
+  isKnock: 0
+  isJumping: 0
+  isBlocking: 0
+  isAttack: 0
+  isHurt: 0
+  specialAttacking: 0
+  animator: {fileID: 2037805037}
+--- !u!114 &294786826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294786815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8465cf204a95cc7429d3d214add3b90c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &294786827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294786815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c28f9be81c5de474198932cbbbc64d62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxLives: 3
 --- !u!1 &395053757
 GameObject:
   m_ObjectHideFlags: 0
@@ -1176,6 +1224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
+  respawnPoint: {fileID: 0}
 --- !u!114 &522117716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1195,6 +1244,7 @@ MonoBehaviour:
     m_Bits: 128
   attackCooldown: 0.5
   attackDamage: 1
+  cooldownMove: 0.5
 --- !u!70 &522117717
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -1244,7 +1294,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0167268b1582b43ad468e96649ab63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diGrab: 0
 --- !u!114 &522117719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1265,7 +1314,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  animator: {fileID: 0}
   isGrounded: 0
 --- !u!50 &522117720
 Rigidbody2D:
@@ -1833,7 +1881,6 @@ MonoBehaviour:
     m_Bits: 128
   grabCooldown: 1
   targetPlayer: {fileID: 0}
-  grabPlayer: 0
   throwXPower: 10
   throwYPower: 5
 --- !u!114 &888074740
@@ -1849,6 +1896,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
+  respawnPoint: {fileID: 0}
 --- !u!114 &888074741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1868,6 +1916,7 @@ MonoBehaviour:
     m_Bits: 128
   attackCooldown: 0.5
   attackDamage: 1
+  cooldownMove: 0.5
 --- !u!114 &888074742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1880,7 +1929,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0167268b1582b43ad468e96649ab63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diGrab: 0
 --- !u!114 &888074743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1901,7 +1949,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  animator: {fileID: 0}
   isGrounded: 0
 --- !u!70 &888074744
 CapsuleCollider2D:
@@ -2870,7 +2917,6 @@ MonoBehaviour:
     m_Bits: 128
   grabCooldown: 1
   targetPlayer: {fileID: 0}
-  grabPlayer: 0
   throwXPower: 10
   throwYPower: 5
 --- !u!114 &1757535871
@@ -2886,6 +2932,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
+  respawnPoint: {fileID: 0}
 --- !u!114 &1757535872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2905,6 +2952,7 @@ MonoBehaviour:
     m_Bits: 128
   attackCooldown: 0.5
   attackDamage: 1
+  cooldownMove: 0.5
 --- !u!114 &1757535873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2917,7 +2965,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0167268b1582b43ad468e96649ab63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diGrab: 0
 --- !u!114 &1757535874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2938,7 +2985,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  animator: {fileID: 0}
   isGrounded: 0
 --- !u!70 &1757535875
 CapsuleCollider2D:
@@ -3546,10 +3592,10 @@ SpriteRenderer:
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.17, y: 4.62}
+  m_Size: {x: 7.68, y: 8.85}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &2037805037
@@ -3920,7 +3966,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0167268b1582b43ad468e96649ab63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diGrab: 0
 --- !u!114 &2143184660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3941,7 +3986,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
-  animator: {fileID: 0}
   isGrounded: 0
 --- !u!212 &2143184661
 SpriteRenderer:

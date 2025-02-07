@@ -7,21 +7,20 @@ public class InputManager : MonoBehaviour
     private InputSystem_Actions.PlayerActions playerActions;
 
     private PlayerMotor motor;
-    private PlayerAttack attack; 
+    private PlayerAttack attack;
     private PlayerSpecial special;
     private PlayerGrabnThrow grabnThrow;
     private PlayerUlt Ult;
+    private BlockScript blockScript;
 
-    public bool diGrab = false;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        if (diGrab == true)
-            return;
+
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
 
         motor = GetComponent<PlayerMotor>();
+        blockScript = GetComponent<BlockScript>();
         attack = GetComponent<PlayerAttack>();
         special = GetComponent<PlayerSpecial>();
         grabnThrow = GetComponent<PlayerGrabnThrow>();
@@ -35,15 +34,16 @@ public class InputManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         motor.ProcessMove(playerActions.Move.ReadValue<Vector2>());
+        blockScript.PerformDeffend(playerActions.Block.ReadValue<float>() > 0);
     }
     private void OnEnable()
     {
         playerActions.Enable();
     }
-    private void OnDisable() 
+    private void OnDisable()
     {
         playerActions.Disable();
     }

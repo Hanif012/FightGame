@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerGrabnThrow : MonoBehaviour
 {
@@ -20,20 +21,20 @@ public class PlayerGrabnThrow : MonoBehaviour
     [SerializeField] private GameObject targetPlayer;
     private InputManager inputManager;
 
-    public bool grabPlayer = false;
     private bool isGrabingFinal = false;
 
     [Header("Throw")]
     [SerializeField] float throwXPower = 10f;
     [SerializeField] float throwYPower = 5f;
-    AudioManager audioManager;
-    private void Awake(){
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-    }
+
+    protected PlayerCondition sPlayer;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         inputManager = GetComponent<InputManager>();
+        sPlayer = GetComponent<PlayerCondition>();
+
     }
 
     void Update()
@@ -52,7 +53,7 @@ public class PlayerGrabnThrow : MonoBehaviour
 
     public void PerformGrabnThrow()
     {
-        if (inputManager.diGrab)
+        if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isAttack || sPlayer.isHurt || sPlayer.specialAttacking)
             return;
 
         // Cooldown check
@@ -62,16 +63,25 @@ public class PlayerGrabnThrow : MonoBehaviour
         rb.linearVelocity = Vector2.zero; // Stop the player's velocity temporarily
 
         // If already grabbing a player, release them
-        if (grabPlayer && targetPlayer != null)
+        if (!sPlayer.ngeGrab)
         {
+            sPlayer.FalseAllAnimation();
+            sPlayer.animator.SetBool("isGrabing", sPlayer.ngeGrab);
+
             Debug.Log("Releasing grabbed player");
-            LepasMusuh();
-            audioManager.PlaySFX(audioManager.throwSound);
+            MegangMusuh();
+            if (!sPlayer.ngeGrab)
+            {
+                sPlayer.ngeGrab = false;
+                sPlayer.animator.SetBool("isGrabing", sPlayer.ngeGrab);
+            }
             return;
         }
 
         Debug.Log("Attempting to grab player");
-        MegangMusuh();
+        LepasMusuh();
+        sPlayer.ngeGrab = false;
+        sPlayer.animator.SetBool("isGrabing", sPlayer.ngeGrab);
     }
 
     private void MegangMusuh()
@@ -83,28 +93,29 @@ public class PlayerGrabnThrow : MonoBehaviour
 
         foreach (Collider2D target in hitTargets)
         {
-            // Ensure not grabbing the player itself
-            if (target.gameObject == gameObject) continue;
-
-            targetPlayer = target.gameObject; // Save the grabbed target
-            targetPlayer.transform.parent = transform; // Parent the target to the player
-
-            grabPlayer = true; // Mark that player is grabbed
-
-            Rigidbody2D targetPlayerRb = targetPlayer.GetComponent<Rigidbody2D>();
-            targetPlayerRb.linearVelocity = Vector2.zero; // Stop target's movement temporarily
-            targetPlayerRb.gravityScale = 0f;
-
-            // Set diGrab on the target player to true (grabbed)
-            InputManager targetInputManager = targetPlayer.GetComponent<InputManager>();
-            if (targetInputManager != null)
+            PlayerCondition sPlayerTarget = targetPlayer.GetComponent<PlayerCondition>();
+            if (!sPlayerTarget.diGrab && !sPlayerTarget.ngeGrab)
             {
-                targetInputManager.diGrab = true; // Set diGrab to true when grabbed
+                sPlayerTarget.diGrab = true; // Set diGrab to true when grabbed
+                                             // Ensure not grabbing the player itself
+                if (target.gameObject == gameObject) continue;
+
+                targetPlayer = target.gameObject; // Save the grabbed target
+                targetPlayer.transform.parent = transform; // Parent the target to the player
+
+
+                sPlayer.ngeGrab = true; // Mark that player is grabbed
+
+                Rigidbody2D targetPlayerRb = targetPlayer.GetComponent<Rigidbody2D>();
+                targetPlayerRb.linearVelocity = Vector2.zero; // Stop target's movement temporarily
+                targetPlayerRb.gravityScale = 0f;
+
+
+                isGrabingFinal = false;
+                StartCoroutine(MoveToGrabPosition(targetPlayer));
+                break; // Exit loop after grabbing one target                
             }
 
-            isGrabingFinal = false;
-            StartCoroutine(MoveToGrabPosition(targetPlayer));
-            break; // Exit loop after grabbing one target
         }
     }
 
@@ -139,6 +150,10 @@ public class PlayerGrabnThrow : MonoBehaviour
         targetPlayer.transform.parent = playerFile.transform;
 
         Rigidbody2D targetPlayerRb = targetPlayer.GetComponent<Rigidbody2D>();
+        PlayerCondition sPlayerTarget = targetPlayer.GetComponent<PlayerCondition>();
+
+        sPlayerTarget.isKnock = true;
+        sPlayer.animator.SetBool("isKnock", sPlayer.isKnock);
         targetPlayerRb.gravityScale = 1f;
         if (transform.rotation.eulerAngles.y == 180)
         {
@@ -151,25 +166,26 @@ public class PlayerGrabnThrow : MonoBehaviour
             targetPlayerRb.linearVelocity = new Vector2(-(throwXPower), throwYPower);  // Kecepatan horizontal dan vertikal untuk efek pentalan
         }
 
-        grabPlayer = false; // Reset grab status
+        sPlayer.ngeGrab = false; // Reset grab status
 
         // Set diGrab on the target player to false (released)
-        InputManager targetInputManager = targetPlayer.GetComponent<InputManager>();
-        if (targetInputManager != null)
+        if (sPlayerTarget != null)
         {
-            StartCoroutine(WaitAndRelease(targetInputManager));
+            StartCoroutine(WaitAndRelease(sPlayerTarget));
         }
 
 
         targetPlayer = null; // Reset targetPlayer after release
     }
 
-    private IEnumerator WaitAndRelease(InputManager targetInputManager)
+    private IEnumerator WaitAndRelease(PlayerCondition sPlayerTarget)
     {
         yield return new WaitForSeconds(2); // Wait for a moment before releasing
-        if (targetInputManager != null)
+        if (sPlayerTarget != null)
         {
-            targetInputManager.diGrab = false; // Set diGrab to false when released
+            sPlayerTarget.isKnock = false;
+            sPlayer.animator.SetBool("isKnock", sPlayer.isKnock);
+            sPlayerTarget.diGrab = false; // Set diGrab to false when released
         }
     }
 
