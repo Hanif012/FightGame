@@ -9,7 +9,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private LayerMask targetLayer;
     [SerializeField] private float attackCooldown = 0.2f;
     [SerializeField] private int attackDamage = 1;
-    [SerializeField] private float cooldownMove = 0.5f;
+    [SerializeField] private float cooldownMove = 1f;
 
     private float lastAttackTime = 0;
     private InputManager inputManager;
@@ -28,14 +28,6 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            PerformAttack();
-        }
-    }
-
     public void PerformAttack()
     {
         if (sPlayer == null) return;
@@ -45,8 +37,6 @@ public class PlayerAttack : MonoBehaviour
 
         if (Time.time < lastAttackTime + attackCooldown)
             return;
-
-        Debug.Log("Mulai Serangan: " + sPlayer.isAttack);
         lastAttackTime = Time.time;
 
         sPlayer.FalseAllAnimation();
@@ -54,7 +44,7 @@ public class PlayerAttack : MonoBehaviour
         sPlayer.animator.SetBool("isAttacking", sPlayer.isAttack);
 
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(attackBoxOrigin.position, attackBoxSize, 0f, targetLayer);
-
+        Debug.Log(hitTargets.Length);
         foreach (Collider2D target in hitTargets)
         {
             if (target.gameObject == gameObject) continue;
@@ -71,12 +61,13 @@ public class PlayerAttack : MonoBehaviour
                     Vector3 directionToTarget = (enemy.position - transform.position).normalized;
                     Vector3 enemyLook = enemy.transform.forward;
                     float dot = Vector3.Dot(directionToTarget, enemyLook);
-                    if (dot < 0f)
+                    if (dot < 0f || sEmyPlayer.isHurt || sEmyPlayer.isKnock)
                     {
                         sEmyPlayer = null;
                         continue;
                     }
                 }
+                Debug.Log("hit!");
                 health.TakeDamage(attackDamage);
                 sEmyPlayer.isHurt = true;
                 sEmyPlayer.animator.SetBool("isHurt", sEmyPlayer.isHurt);

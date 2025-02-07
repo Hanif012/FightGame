@@ -14,13 +14,14 @@ public class PlayerCondition : MonoBehaviour
 
     [Header("Components")]
     [SerializeField] public Animator animator;
+    [SerializeField] public Rigidbody2D rigidbody2D;
 
 
 
     public void FalseAllAnimation()
     {
         ngeGrab = false;
-        animator.SetBool("isGrabbing", ngeGrab);
+        animator.SetBool("isGrabing", ngeGrab);
 
         isKnock = false;
         animator.SetBool("isKnock", isKnock);
@@ -38,7 +39,7 @@ public class PlayerCondition : MonoBehaviour
         animator.SetBool("isSpecialAtk", specialAttacking);
 
         isHurt = false;
-        animator.SetBool("getAttack", isHurt);
+        animator.SetBool("isHurt", isHurt);
     }
 
 }

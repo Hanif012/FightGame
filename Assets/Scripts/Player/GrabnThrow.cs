@@ -39,10 +39,6 @@ public class PlayerGrabnThrow : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1)) // right mouse button for grab
-        {
-            PerformGrabnThrow();
-        }
 
         // Ensure targetPlayer is following positionGrab only after it has been successfully grabbed
         if (targetPlayer != null && isGrabingFinal)
@@ -107,9 +103,8 @@ public class PlayerGrabnThrow : MonoBehaviour
                 sPlayer.ngeGrab = true; // Mark that player is grabbed
 
                 Rigidbody2D targetPlayerRb = targetPlayer.GetComponent<Rigidbody2D>();
-                targetPlayerRb.linearVelocity = Vector2.zero; // Stop target's movement temporarily
-                targetPlayerRb.gravityScale = 0f;
-
+                sPlayerTarget.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+                sPlayerTarget.GetComponent<Rigidbody2D>().gravityScale = 0f;
 
                 isGrabingFinal = false;
                 StartCoroutine(MoveToGrabPosition(targetPlayer));

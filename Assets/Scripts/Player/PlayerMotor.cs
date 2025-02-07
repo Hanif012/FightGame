@@ -22,6 +22,7 @@ public class PlayerMotor : MonoBehaviour
     {
         inputManager = GetComponent<InputManager>();
         sPlayer = GetComponent<PlayerCondition>();
+
     }
 
     void Update()
@@ -48,7 +49,10 @@ public class PlayerMotor : MonoBehaviour
 
         if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking)
         {
-
+            if (!isGrounded)
+            {
+                sPlayer.isBlocking = false;
+            }
             return;
         }
 
@@ -77,7 +81,7 @@ public class PlayerMotor : MonoBehaviour
     // Fungsi loncat
     public void Jump()
     {
-        if (sPlayer.diGrab)
+        if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking)
         {
             return;
         }
