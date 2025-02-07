@@ -6,17 +6,39 @@ public class PlayerUlt : MonoBehaviour
     [SerializeField] private Transform ultAttackOrigin; // Position where ult happens
     [SerializeField] private Vector2 ultAttackSize = new Vector2(3.0f, 2.0f); // Area of the ult
     [SerializeField] private LayerMask targetLayer; // What the ult can hit
-    [SerializeField] private float ultCooldown = 10f; // Wait time before using ult again
+    [SerializeField] private float ultCooldown = 10f; // Time needed to fully charge
     [SerializeField] private int ultDamage = 50; // Big damage
+    [SerializeField] private UltChargeUI ultChargeUI; // Reference to Ult Charge UI
 
     private float lastUltTime = -10f; // Track last ult usage
-    AudioManager audioManager;
-    private void Awake(){
+    private bool isUltReady = false;
+    private AudioManager audioManager;
+
+    private void Awake()
+    {
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
-    void Update()
+
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.E)) 
+        
+        if (ultChargeUI != null)
+        {
+            ultChargeUI.InitializeUltCharge(ultCooldown);
+            ultChargeUI.StartCharging();
+        }
+    }
+
+    private void Update()
+    {
+        
+        if (ultChargeUI != null)
+        {
+            isUltReady = ultChargeUI.IsUltReady();
+        }
+
+        
+        if (Input.GetKeyDown(KeyCode.E) && isUltReady)
         {
             PerformUlt();
         }
@@ -24,15 +46,10 @@ public class PlayerUlt : MonoBehaviour
 
     public void PerformUlt()
     {
-        // Check if enough time has passed since the last ult
-        if (Time.time < lastUltTime + ultCooldown)
-        {
-            Debug.Log("Ult is on cooldown!");
-            return;
-        }
+        if (!isUltReady) return; 
 
-        lastUltTime = Time.time; 
-        Debug.Log("Ultimate");
+        lastUltTime = Time.time;
+        Debug.Log("Ultimate Activated!");
         audioManager.PlaySFX(audioManager.attack);
 
         // Detect targets in the ult range
@@ -40,7 +57,7 @@ public class PlayerUlt : MonoBehaviour
 
         foreach (Collider2D target in hitTargets)
         {
-            if (target.gameObject == gameObject)continue;
+            if (target.gameObject == gameObject) continue; 
 
             Debug.Log($"ULT hit: {target.name}");
 
@@ -50,6 +67,13 @@ public class PlayerUlt : MonoBehaviour
             {
                 health.TakeDamage(ultDamage);
             }
+        }
+
+     
+        if (ultChargeUI != null)
+        {
+            ultChargeUI.ResetUltCharge();
+            ultChargeUI.StartCharging();
         }
     }
 
@@ -62,4 +86,3 @@ public class PlayerUlt : MonoBehaviour
         Gizmos.DrawWireCube(ultAttackOrigin.position, ultAttackSize);
     }
 }
-

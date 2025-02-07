@@ -8,6 +8,7 @@ public class LivesManager : MonoBehaviour
     [SerializeField] private int maxLives = 3;
     private Dictionary<Health, int> playerLives = new Dictionary<Health, int>(); // Track lives per player
     private Dictionary<Health, Transform> respawnPoints = new Dictionary<Health, Transform>(); // Store respawn points
+    private Dictionary<Health, LivesUI> playerUIs = new Dictionary<Health, LivesUI>(); // Store UI for each player
 
     private void Awake()
     {
@@ -21,28 +22,37 @@ public class LivesManager : MonoBehaviour
         }
     }
 
-    // Register players with their respawn points
-    public void RegisterPlayer(Health player, Transform respawnPoint)
-{
-    if (!playerLives.ContainsKey(player))
+    // Register players with their respawn points and UI
+    public void RegisterPlayer(Health player, Transform respawnPoint, LivesUI livesUI)
     {
-        playerLives[player] = maxLives;
-        respawnPoints[player] = respawnPoint;
+        if (!playerLives.ContainsKey(player))
+        {
+            playerLives[player] = maxLives;
+            respawnPoints[player] = respawnPoint;
+            playerUIs[player] = livesUI; // Assign UI to player
 
-        Debug.Log(player.gameObject.name + " registered with respawn point at " + respawnPoint.position);
-    }
-    else
-    {
-        Debug.LogWarning(player.gameObject.name + " is already registered!");
-    }
-}
+            // Initialize UI for this player
+            livesUI.UpdateLivesUI(maxLives);
 
+            Debug.Log(player.gameObject.name + " registered with respawn point at " + respawnPoint.position);
+        }
+        else
+        {
+            Debug.LogWarning(player.gameObject.name + " is already registered!");
+        }
+    }
 
     public void LoseLife(Health player)
     {
         if (!playerLives.ContainsKey(player)) return; // Safety check
 
         playerLives[player]--;
+
+        // ✅ Update the UI when the player loses a life
+        if (playerUIs.ContainsKey(player))
+        {
+            playerUIs[player].UpdateLivesUI(playerLives[player]);
+        }
 
         if (playerLives[player] > 0)
         {
