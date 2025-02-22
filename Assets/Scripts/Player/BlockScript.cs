@@ -11,7 +11,7 @@ public class BlockScript : MonoBehaviour
 
     public void PerformDeffend(bool codisi)
     {
-        if (sPlayer.diGrab || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isJumping || sPlayer.ngeGrab)
+        if (sPlayer.diGrab || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isJumping || sPlayer.ngeGrab || sPlayer.isUlti )
             return;
         if (codisi)
         {

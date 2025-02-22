@@ -49,7 +49,7 @@ public class PlayerGrabnThrow : MonoBehaviour
 
     public void PerformGrabnThrow()
     {
-        if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isAttack || sPlayer.isHurt || sPlayer.specialAttacking)
+        if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isAttack || sPlayer.isHurt || sPlayer.specialAttacking || sPlayer.isUlti)
             return;
 
         // Cooldown check

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerUlt : MonoBehaviour
@@ -14,6 +15,11 @@ public class PlayerUlt : MonoBehaviour
     private bool isUltReady = false;
     private AudioManager audioManager;
 
+    private PlayerCondition sPlayer;
+    private PlayerCondition sEmyPlayer;
+    private List<PlayerCondition> hitEnemiesList = new List<PlayerCondition>(); // Menyimpan semua musuh yang terkena hit
+
+
     private void Awake()
     {
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
@@ -21,7 +27,8 @@ public class PlayerUlt : MonoBehaviour
 
     private void Start()
     {
-        
+        sPlayer = GetComponent<PlayerCondition>();
+
         if (ultChargeUI != null)
         {
             ultChargeUI.InitializeUltCharge(ultCooldown);
@@ -46,11 +53,18 @@ public class PlayerUlt : MonoBehaviour
 
     public void PerformUlt()
     {
-        if (!isUltReady) return; 
+        if (!isUltReady) return;
+
+        if (sPlayer.diGrab || sPlayer.ngeGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isUlti)
+            return;
 
         lastUltTime = Time.time;
         Debug.Log("Ultimate Activated!");
         audioManager.PlaySFX(audioManager.attack);
+
+        sPlayer.FalseAllAnimation();
+        sPlayer.isUlti = true;
+        sPlayer.animator.SetBool("isUlt", sPlayer.isUlti);
 
         // Detect targets in the ult range
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(ultAttackOrigin.position, ultAttackSize, 0f, targetLayer);
@@ -63,9 +77,14 @@ public class PlayerUlt : MonoBehaviour
 
             // Apply high damage to the target if they have a Health component
             Health health = target.GetComponent<Health>();
+            sEmyPlayer = target.GetComponent<PlayerCondition>();
             if (health != null)
             {
                 health.TakeDamage(ultDamage);
+                sEmyPlayer.FalseAllAnimation();
+                sEmyPlayer.isHurt = true;
+                sEmyPlayer.animator.SetBool("isHurt", sEmyPlayer.isHurt);
+                hitEnemiesList.Add(sEmyPlayer);
             }
         }
 
@@ -75,6 +94,29 @@ public class PlayerUlt : MonoBehaviour
             ultChargeUI.ResetUltCharge();
             ultChargeUI.StartCharging();
         }
+
+        Invoke(nameof(ResetHurt), 1);
+        Invoke(nameof(ResetAttack), 0.5f);
+
+    }
+
+    private void ResetAttack()
+    {
+        sPlayer.isAttack = false;
+        sPlayer.animator.SetBool("isSpecialAtk", sPlayer.specialAttacking);
+    }
+
+    private void ResetHurt()
+    {
+        foreach (PlayerCondition sEmyPlayerr in hitEnemiesList)
+        {
+            sEmyPlayerr.isHurt = false;
+            sEmyPlayerr.animator.SetBool("isHurt", sEmyPlayerr.isHurt);
+
+        }
+        hitEnemiesList.Clear();
+
+
     }
 
     private void OnDrawGizmosSelected()

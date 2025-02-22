@@ -16,7 +16,11 @@ public class PlayerMotor : MonoBehaviour
     private bool doubleJump;
     protected PlayerCondition sPlayer;
 
-
+    AudioManager audioManager;
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
     private InputManager inputManager;
     void Start()
     {
@@ -47,7 +51,7 @@ public class PlayerMotor : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, -180, 0);
         }
 
-        if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking)
+        if (sPlayer.diGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isUlti )
         {
             if (!isGrounded)
             {
@@ -62,14 +66,19 @@ public class PlayerMotor : MonoBehaviour
         if (input.x == 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y);
+
         }
         else if (input.x > -0.5f && input.x < 0.5f)  // Rentang nilai antara -0.5 dan 0.5
         {
             speed = 2;
+            audioManager.PlaySFX(audioManager.walk);
+
         }
         else if (input.x == 1f || input.x == -1f) // Kecepatan tinggi untuk nilai input tertentu
         {
             speed = 5;
+            audioManager.PlaySFX(audioManager.run);
+
         }
         rb.linearVelocity = new Vector2(moveDirection.normalized.x * speed, rb.linearVelocity.y);
         sPlayer.animator.SetBool("isJumping", !isGrounded);
@@ -92,12 +101,14 @@ public class PlayerMotor : MonoBehaviour
             doubleJump = true;
             // Menambahkan gaya loncatan
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
+            audioManager.PlaySFX(audioManager.jump);
 
         }
         else if (doubleJump)
         {
             doubleJump = false;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sqrt(jumpHeight * -2f * gravity));
+            audioManager.PlaySFX(audioManager.jump);
 
         }
         sPlayer.animator.SetBool("isJumping", !isGrounded);
