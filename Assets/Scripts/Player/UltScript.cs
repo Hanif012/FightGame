@@ -82,7 +82,7 @@ public class PlayerUlt : MonoBehaviour
         // Visualize the ult attack area in the Scene view
         if (ultAttackOrigin == null) return;
 
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(ultAttackOrigin.position, ultAttackSize);
     }
 }

@@ -482,6 +482,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b8f5eac7-ff88-4226-8932-ad3ab4bd2139",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GrabnThrow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "897a8c66-6e57-48b4-b28b-6a63ca980ade",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -509,6 +520,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ef2559ba-51a4-4c14-b0cc-9bed143b1f78",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Block",
                     "isComposite": false,
                     "isPartOfComposite": false

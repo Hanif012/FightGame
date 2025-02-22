@@ -102,7 +102,7 @@ public class PlayerAttack : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         if (attackBoxOrigin == null) return;
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.white;
         Gizmos.DrawWireCube(attackBoxOrigin.position, attackBoxSize);
     }
 }

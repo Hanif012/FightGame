@@ -89,7 +89,7 @@ public class PlayerGrabnThrow : MonoBehaviour
 
         foreach (Collider2D target in hitTargets)
         {
-            PlayerCondition sPlayerTarget = targetPlayer.GetComponent<PlayerCondition>();
+            PlayerCondition sPlayerTarget = target.GetComponent<PlayerCondition>();
             if (!sPlayerTarget.diGrab && !sPlayerTarget.ngeGrab)
             {
                 sPlayerTarget.diGrab = true; // Set diGrab to true when grabbed
@@ -187,7 +187,7 @@ public class PlayerGrabnThrow : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         if (specialBoxOrigin == null) return;
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.green;
         Gizmos.DrawWireCube(specialBoxOrigin.position, specialBoxSize);
     }
 }
