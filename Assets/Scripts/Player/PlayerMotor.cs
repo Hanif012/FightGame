@@ -17,6 +17,8 @@ public class PlayerMotor : MonoBehaviour
     protected PlayerCondition sPlayer;
 
     AudioManager audioManager;
+    private bool isPlayingRunSound = false;
+    private bool isPlayingWalkSound = false;
     private void Awake()
     {
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
@@ -65,19 +67,33 @@ public class PlayerMotor : MonoBehaviour
         // Mengecek kecepatan berdasarkan input horizontal
         if (input.x == 0f)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            StopMovementSounds();
+            return;
 
         }
         else if (input.x > -0.5f && input.x < 0.5f)  // Rentang nilai antara -0.5 dan 0.5
         {
             speed = 2;
-            audioManager.PlaySFX(audioManager.walk);
+            if (!isPlayingWalkSound)
+            {
+                StopMovementSounds();
+                audioManager.PlaySFX(audioManager.walk);
+                isPlayingWalkSound = true;
+                isPlayingRunSound = false;
+            }
 
         }
         else if (input.x == 1f || input.x == -1f) // Kecepatan tinggi untuk nilai input tertentu
         {
             speed = 5;
-            audioManager.PlaySFX(audioManager.run);
+            if (!isPlayingRunSound)
+            {
+                StopMovementSounds();
+                audioManager.PlaySFX(audioManager.run);
+                isPlayingRunSound = true;
+                isPlayingWalkSound = false;
+            }
 
         }
         rb.linearVelocity = new Vector2(moveDirection.normalized.x * speed, rb.linearVelocity.y);
@@ -127,5 +143,12 @@ public class PlayerMotor : MonoBehaviour
         Debug.Log("Test");
         sPlayer.animator.SetBool("isJumping", !isGrounded);
 
+    }
+
+    private void StopMovementSounds()
+    {
+        audioManager.StopSFX();
+        isPlayingWalkSound = false;
+        isPlayingRunSound = false;
     }
 }

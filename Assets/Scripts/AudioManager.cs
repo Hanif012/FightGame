@@ -4,10 +4,11 @@ using UnityEngine.UIElements;
 public class AudioManager : MonoBehaviour
 {
     [Header("Audio Source")]
-    [SerializeField] AudioSource musicSource;
-    [SerializeField] AudioSource SFXSource;
+    [SerializeField] private AudioSource musicSource;
+    [SerializeField] private AudioSource movementSFXSource;
+    [SerializeField] private AudioSource actionSFXSource;
 
-    [Header("Audio Source")]
+    [Header("Audio Clips")]
     public AudioClip throwSound;
     public AudioClip backgroundMusic;
     public AudioClip jump;
@@ -21,10 +22,42 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlaySFX(AudioClip clip){
-        SFXSource.PlayOneShot(clip);
+        if (clip == walk || clip == run) 
+        {
+            PlayMovementSFX(clip);
+        }
+        else 
+        {
+            PlayActionSFX(clip);
+        }
     }
 
     public void StopSFX(){
-        SFXSource.Stop();
+        movementSFXSource.Stop();
+    }
+
+    private void PlayMovementSFX(AudioClip clip)
+    {
+        if (clip != null && movementSFXSource != null && !movementSFXSource.isPlaying)
+        {
+            movementSFXSource.clip = clip;
+            movementSFXSource.Play();
+        }
+    }
+
+    private void StopMovementSFX()
+    {
+        if (movementSFXSource != null)
+        {
+            movementSFXSource.Stop();
+        }
+    }
+
+    private void PlayActionSFX(AudioClip clip)
+    {
+        if (clip != null && actionSFXSource != null)
+        {
+            actionSFXSource.PlayOneShot(clip); 
+        }
     }
 }
