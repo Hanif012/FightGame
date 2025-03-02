@@ -494,7 +494,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f0058365-47e5-43b6-b007-6c1c2952f1fd"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<HID::SHANWAN Trust Gamepad>/button2"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",

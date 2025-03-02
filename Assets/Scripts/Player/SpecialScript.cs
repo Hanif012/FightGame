@@ -82,18 +82,21 @@ public class PlayerSpecial : MonoBehaviour
                 hitEnemiesList.Add(sEmyPlayer);
             }
         }
+        Debug.Log("Player is special attacking!2");
+
         Invoke(nameof(ResetHurt), 1);
         Invoke(nameof(ResetAttack), 0.5f);
+        Debug.Log("Player is special attacking!3");
 
     }
 
     private void ResetAttack()
     {
-        sPlayer.isAttack = false;
+        sPlayer.specialAttacking = false;
         sPlayer.animator.SetBool("isSpecialAtk", sPlayer.specialAttacking);
     }
 
-    private void ResetHurt()
+     void ResetHurt()
     {
         foreach (PlayerCondition sEmyPlayerr in hitEnemiesList)
         {

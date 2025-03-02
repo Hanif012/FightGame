@@ -71,6 +71,7 @@ public class PlayerUlt : MonoBehaviour
 
         foreach (Collider2D target in hitTargets)
         {
+            Debug.Log($"ULT hit: {target.name}");
             if (target.gameObject == gameObject) continue; 
 
             Debug.Log($"ULT hit: {target.name}");
@@ -97,13 +98,13 @@ public class PlayerUlt : MonoBehaviour
 
         Invoke(nameof(ResetHurt), 1);
         Invoke(nameof(ResetAttack), 0.5f);
-
+        Debug.Log("rawr");
     }
 
     private void ResetAttack()
     {
-        sPlayer.isAttack = false;
-        sPlayer.animator.SetBool("isSpecialAtk", sPlayer.specialAttacking);
+        sPlayer.isUlti = false;
+        sPlayer.animator.SetBool("isSpecialAtk", sPlayer.isUlti);
     }
 
     private void ResetHurt()

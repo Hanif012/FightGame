@@ -1092,7 +1092,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   musicSource: {fileID: 1034759697}
-  SFXSource: {fileID: 30154882}
+  movementSFXSource: {fileID: 1034759697}
+  actionSFXSource: {fileID: 1034759697}
   throwSound: {fileID: 8300000, guid: ed7c19ab41730f4469c62ad198ded51b, type: 3}
   backgroundMusic: {fileID: 8300000, guid: dd1e6f6c713f91848875708405558678, type: 3}
   jump: {fileID: 8300000, guid: 020c606bfd6f65e4383ad88772e1082c, type: 3}
