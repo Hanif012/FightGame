@@ -1711,6 +1711,10 @@ PrefabInstance:
       propertyPath: respawnPoint
       value: 
       objectReference: {fileID: 1307161617}
+    - target: {fileID: 1414959178761729274, guid: c4057dcc3d73fd84ba2970188649d8af, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 221da55d4dac2ba46a954dc0f13efa90, type: 2}
     - target: {fileID: 2855246746009975198, guid: c4057dcc3d73fd84ba2970188649d8af, type: 3}
       propertyPath: isHurt
       value: 1
