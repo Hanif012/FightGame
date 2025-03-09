@@ -2130,8 +2130,8 @@ MonoBehaviour:
   gravity: -9.81
   patrolTime: 3
   grabbingTime: 5
-  platformGroundCheck: {fileID: 1377143959}
-  characterGroundCheck: {fileID: 544017308}
+  platformGroundCheck: {fileID: 544017308}
+  characterGroundCheck: {fileID: 1377143959}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
