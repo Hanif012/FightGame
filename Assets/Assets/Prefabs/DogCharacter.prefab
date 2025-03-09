@@ -252,7 +252,6 @@ MonoBehaviour:
     m_Bits: 128
   attackCooldown: 0.5
   attackDamage: 1
-  cooldownMove: 0.5
 --- !u!114 &1736420741452255091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,6 +350,7 @@ MonoBehaviour:
   isAttack: 0
   isHurt: 0
   specialAttacking: 0
+  isUlti: 0
   animator: {fileID: 1661256967927684506}
   rigidbody2D: {fileID: 0}
 --- !u!114 &1795605694097058372

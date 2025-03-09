@@ -7,7 +7,7 @@ public class PlayerUlt : MonoBehaviour
     [SerializeField] private Transform ultAttackOrigin; // Position where ult happens
     [SerializeField] private Vector2 ultAttackSize = new Vector2(3.0f, 2.0f); // Area of the ult
     [SerializeField] private LayerMask targetLayer; // What the ult can hit
-    [SerializeField] private float ultCooldown = 10f; // Time needed to fully charge
+    [SerializeField] public float ultCooldown = 10f; // Time needed to fully charge
     [SerializeField] private int ultDamage = 50; // Big damage
     [SerializeField] private UltChargeUI ultChargeUI; // Reference to Ult Charge UI
 

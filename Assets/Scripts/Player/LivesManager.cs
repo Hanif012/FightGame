@@ -6,9 +6,9 @@ public class LivesManager : MonoBehaviour
     public static LivesManager Instance { get; private set; }
 
     [SerializeField] private int maxLives = 3;
-    private Dictionary<Health, int> playerLives = new Dictionary<Health, int>(); // Track lives per player
-    private Dictionary<Health, Transform> respawnPoints = new Dictionary<Health, Transform>(); // Store respawn points
-    private Dictionary<Health, LivesUI> playerUIs = new Dictionary<Health, LivesUI>(); // Store UI for each player
+    private Dictionary<Health, int> playerLives = new Dictionary<Health, int>(); 
+    private Dictionary<Health, Transform> respawnPoints = new Dictionary<Health, Transform>(); 
+    private Dictionary<Health, PlayerUI> playerUIs = new Dictionary<Health, PlayerUI>(); 
 
     private void Awake()
     {
@@ -22,36 +22,35 @@ public class LivesManager : MonoBehaviour
         }
     }
 
-    // Register players with their respawn points and UI
-    public void RegisterPlayer(Health player, Transform respawnPoint, LivesUI livesUI)
+    // ✅ FIXED: Now correctly expects a respawnPoint
+    public void RegisterPlayer(Health player, Transform respawnPoint, PlayerUI playerUI, float ultChargeTime)
     {
         if (!playerLives.ContainsKey(player))
         {
             playerLives[player] = maxLives;
             respawnPoints[player] = respawnPoint;
-            playerUIs[player] = livesUI; // Assign UI to player
+            playerUIs[player] = playerUI; 
 
-            // Initialize UI for this player
-            livesUI.UpdateLivesUI(maxLives);
+            // ✅ FIXED: Get max health correctly
+            playerUI.SetupUI(player.CharacterFrame, Mathf.RoundToInt(player.GetMaxHealth()), maxLives, ultChargeTime);
 
-            Debug.Log(player.gameObject.name + " registered with respawn point at " + respawnPoint.position);
+            Debug.Log($"{player.CharacterFrame.name} registered with respawn point at {respawnPoint.position}");
         }
         else
         {
-            Debug.LogWarning(player.gameObject.name + " is already registered!");
+            Debug.LogWarning($"{player.CharacterFrame.name} is already registered!");
         }
     }
 
     public void LoseLife(Health player)
     {
-        if (!playerLives.ContainsKey(player)) return; // Safety check
+        if (!playerLives.ContainsKey(player)) return; 
 
         playerLives[player]--;
 
-        // ✅ Update the UI when the player loses a life
         if (playerUIs.ContainsKey(player))
         {
-            playerUIs[player].UpdateLivesUI(playerLives[player]);
+            playerUIs[player].UpdateLives(playerLives[player]); 
         }
 
         if (playerLives[player] > 0)
@@ -66,17 +65,21 @@ public class LivesManager : MonoBehaviour
 
     private void Respawn(Health player)
     {
-        Debug.Log(player.gameObject.name + " lost a life. Respawning...");
+        if (!respawnPoints.ContainsKey(player))
+        {
+            Debug.LogError($"No respawn point found for {player.CharacterFrame.name}!");
+            return;
+        }
+
+        Debug.Log($"{player.CharacterFrame.name} lost a life. Respawning...");
 
         player.ResetHealth();
-
-        // Move the player back to their unique respawn point
         player.transform.position = respawnPoints[player].position;
     }
 
     private void GameOver(Health player)
     {
-        Debug.Log(player.gameObject.name + " is out of lives!");
+        Debug.Log($"{player.CharacterFrame.name} is out of lives!");
         player.gameObject.SetActive(false); 
     }
 

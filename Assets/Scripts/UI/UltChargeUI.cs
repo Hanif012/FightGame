@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class UltChargeUI : MonoBehaviour
 {
-    [SerializeField] private Slider ultSlider; // Assign in Inspector
+    [SerializeField] public Slider ultSlider; // Assign in Inspector
     private float ultChargeTime; // Max time required to charge ult
     private float currentCharge; // Current ult charge
 
