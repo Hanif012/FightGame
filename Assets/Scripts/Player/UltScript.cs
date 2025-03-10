@@ -3,48 +3,48 @@ using UnityEngine;
 
 public class PlayerUlt : MonoBehaviour
 {
-    [Header("Ult Settings")]
-    [SerializeField] private Transform ultAttackOrigin; // Position where ult happens
-    [SerializeField] private Vector2 ultAttackSize = new Vector2(3.0f, 2.0f); // Area of the ult
-    [SerializeField] private LayerMask targetLayer; // What the ult can hit
-    [SerializeField] public float ultCooldown = 10f; // Time needed to fully charge
-    [SerializeField] private int ultDamage = 50; // Big damage
-    [SerializeField] private UltChargeUI ultChargeUI; // Reference to Ult Charge UI
+    [SerializeField] private Transform ultAttackOrigin;
+    [SerializeField] private Vector2 ultAttackSize = new Vector2(3.0f, 2.0f);
+    [SerializeField] private LayerMask targetLayer;
+    [SerializeField] public float ultCooldown = 10f;
+    [SerializeField] private int ultDamage = 50;
+    [SerializeField] private UltChargeUI ultChargeUI;
 
-    private float lastUltTime = -10f; // Track last ult usage
     private bool isUltReady = false;
     private AudioManager audioManager;
-
     private PlayerCondition sPlayer;
-    private PlayerCondition sEmyPlayer;
-    private List<PlayerCondition> hitEnemiesList = new List<PlayerCondition>(); // Menyimpan semua musuh yang terkena hit
-
+    private List<PlayerCondition> hitEnemiesList = new List<PlayerCondition>();
 
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+        audioManager = GameObject.FindGameObjectWithTag("Audio")?.GetComponent<AudioManager>();
     }
 
     private void Start()
     {
         sPlayer = GetComponent<PlayerCondition>();
 
-        if (ultChargeUI != null)
+        if (ultChargeUI == null)
         {
-            ultChargeUI.InitializeUltCharge(ultCooldown);
-            ultChargeUI.StartCharging();
+            ultChargeUI = Object.FindFirstObjectByType<UltChargeUI>();
+            if (ultChargeUI == null)
+            {
+                Debug.LogError("⚠️ PlayerUlt: UltChargeUI is missing! Assign it manually in Unity.");
+                return;
+            }
         }
+
+        ultChargeUI.InitializeUltCharge(ultCooldown);
+        ultChargeUI.StartCharging();
     }
 
     private void Update()
     {
-        
         if (ultChargeUI != null)
         {
             isUltReady = ultChargeUI.IsUltReady();
         }
 
-        
         if (Input.GetKeyDown(KeyCode.E) && isUltReady)
         {
             PerformUlt();
@@ -53,79 +53,70 @@ public class PlayerUlt : MonoBehaviour
 
     public void PerformUlt()
     {
-        if (!isUltReady) return;
+        if (!isUltReady) return; // ✅ Ensures ult is only used when charged
 
         if (sPlayer.diGrab || sPlayer.ngeGrab || sPlayer.isBlocking || sPlayer.isKnock || sPlayer.specialAttacking || sPlayer.isUlti)
             return;
 
-        lastUltTime = Time.time;
-        Debug.Log("Ultimate Activated!");
-        audioManager.PlaySFX(audioManager.attack);
+        if (audioManager != null) 
+            audioManager.PlaySFX(audioManager.attack);
 
         sPlayer.FalseAllAnimation();
         sPlayer.isUlti = true;
-        sPlayer.animator.SetBool("isUlt", sPlayer.isUlti);
+        sPlayer.animator.SetBool("isUlt", true);
 
-        // Detect targets in the ult range
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(ultAttackOrigin.position, ultAttackSize, 0f, targetLayer);
 
         foreach (Collider2D target in hitTargets)
         {
-            Debug.Log($"ULT hit: {target.name}");
-            if (target.gameObject == gameObject) continue; 
+            if (target.gameObject == gameObject) continue;
 
-            Debug.Log($"ULT hit: {target.name}");
-
-            // Apply high damage to the target if they have a Health component
             Health health = target.GetComponent<Health>();
-            sEmyPlayer = target.GetComponent<PlayerCondition>();
+            PlayerCondition enemyPlayer = target.GetComponent<PlayerCondition>();
+
             if (health != null)
             {
                 health.TakeDamage(ultDamage);
-                sEmyPlayer.FalseAllAnimation();
-                sEmyPlayer.isHurt = true;
-                sEmyPlayer.animator.SetBool("isHurt", sEmyPlayer.isHurt);
-                hitEnemiesList.Add(sEmyPlayer);
+
+                if (enemyPlayer != null)
+                {
+                    enemyPlayer.FalseAllAnimation();
+                    enemyPlayer.isHurt = true;
+                    enemyPlayer.animator.SetBool("isHurt", true);
+                    hitEnemiesList.Add(enemyPlayer);
+                }
             }
         }
 
-     
+        // ✅ Ensure ult recharge starts properly
         if (ultChargeUI != null)
         {
             ultChargeUI.ResetUltCharge();
             ultChargeUI.StartCharging();
         }
 
-        Invoke(nameof(ResetHurt), 1);
+        if (hitEnemiesList.Count > 0)
+            Invoke(nameof(ResetHurt), 1f);
+
         Invoke(nameof(ResetAttack), 0.5f);
-        Debug.Log("rawr");
     }
 
     private void ResetAttack()
     {
         sPlayer.isUlti = false;
-        sPlayer.animator.SetBool("isSpecialAtk", sPlayer.isUlti);
+        sPlayer.animator.SetBool("isUlt", false);
     }
 
     private void ResetHurt()
     {
-        foreach (PlayerCondition sEmyPlayerr in hitEnemiesList)
+        foreach (PlayerCondition enemy in hitEnemiesList)
         {
-            sEmyPlayerr.isHurt = false;
-            sEmyPlayerr.animator.SetBool("isHurt", sEmyPlayerr.isHurt);
-
+            if (enemy != null)
+            {
+                enemy.isHurt = false;
+                enemy.animator.SetBool("isHurt", false);
+            }
         }
         hitEnemiesList.Clear();
-
-
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // Visualize the ult attack area in the Scene view
-        if (ultAttackOrigin == null) return;
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(ultAttackOrigin.position, ultAttackSize);
     }
 }
